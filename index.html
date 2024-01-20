@@ -95,6 +95,38 @@ function smoothScroll(targetId) {
   });
 }
 
+
+function getip() {
+  var xhr = new XMLHttpRequest();
+  var url = 'https://api.ipify.org';
+  xhr.open("GET", url, true);
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4 && xhr.status === 200) {
+     getIpLocation(xhr.responseText)
+    }
+  };
+  xhr.send();
+}
+function getIpLocation(ipAddress) {
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', 'https://ipapi.co/' + ipAddress + '/json/');
+  xhr.onload = function() {
+    if (xhr.status === 200) {
+      var data = JSON.parse(xhr.responseText);
+      if(data.country_name == 'China'){
+       cncn = document.createElement('a');
+       cncn.href = 'https://www.123pan.com/s/csg9-JTTWd';
+       cncn.style.color = 'orange';
+       cncn.innerHTML = '<br><br>连接Github速度过慢？检测到您的网络来自中国且超过5秒未能连接到Github.com，如果您在访问Github时遇到问题，您可以点击此处通过备用线路下载本书';
+       document.getElementById('learn').appendChild(cncn);
+      }
+    } else {
+      console.log('Request failed. Returned status of ' + xhr.status);
+    }
+  };
+  xhr.send();
+}
+
 function l_rog(){
  var newPageLoad_progress = document.createElement('div');
  newPageLoad_progress.className = 'progress-4';
@@ -102,6 +134,7 @@ function l_rog(){
   document.getElementById('l_rog').textContent = 'Redirecting to Github... ';
  document.getElementById('l_rog').appendChild(newPageLoad_progress);
  window.location.assign('https://github.com/BKLAI/AI-Learning');
+ setTimeout('getip()',5000)
 }
 function l_dtb(){
  var newPageLoad_progress = document.createElement('div');
@@ -110,6 +143,7 @@ function l_dtb(){
   document.getElementById('l_dtb').textContent = 'Connecting to Github... ';
  document.getElementById('l_dtb').appendChild(newPageLoad_progress);
  window.location.assign('https://github.com/BKLAI/AI-Learning/raw/main/Book1/zh_BINKLINGS%20AI%20learning%201.pdf');
+ setTimeout('getip()',5000)
 }
 /*
 const img = new Image();
