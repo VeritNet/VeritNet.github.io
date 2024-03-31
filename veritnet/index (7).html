@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VeritNet - Crafting Your Reality</title>
+  
+  
+<style>
+.menuBtn {
+ color: lightgray;
+ background-color: transparent;
+ border: 0
+}
+.menuBtn:hover {
+ color: white;
+ background-color: transparent;
+}
+
+#overlay_bg {
+     position: fixed;
+     top: 0;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     z-index: 1;
+     background-color: black;
+     backdrop-filter: blur(5px);
+ }
+
+@keyframes fadeIn {
+ from {
+  opacity: 0;
+ } to {
+  opacity: 1;
+ }
+}
+
+#loading { display: flex; justify-content: center; align-items: center; width: 54px; height: 18px; } #loading > div { width: 10px; height: 10px; margin: 4px; border-radius: 50%; background-color: #fff; opacity: 0; animation: loadani 1s ease-in-out infinite; box-shadow: 0 0 10px #fff, 0 0 10px #fff, 0 0 30px #fff, 0 0 40px black} #loading > div:nth-child(1) { animation-delay: -200ms; } #loading > div:nth-child(2) { animation-delay: -100ms; } #loading > div:nth-child(3) { animation-delay: 0ms; } @keyframes loadani { 0% { opacity: 0; transform: translateY(-145%); } 10% { opacity: 0.5; } 20% { opacity: 1; transform: translateY(0); } 80% { opacity: 1; transform: translateY(0); } 90% { opacity: 0.5; } 100% { opacity: 0; transform: translateY(145%); } }
+
+
+.div-1 {
+  border: 2px solid #333;
+  background-color: #222;
+  border-radius: 10px;
+  padding: 20px;
+  color: #fff;
+  transition: all 0.25s ease-in-out;
+}
+.div-1:hover {
+  border: 2px solid #444;
+}
+
+.hbtn {
+  color: skyblue;
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  padding: 5px;
+  padding-left: 15px;
+  padding-right: 15px;
+  display: inline-block;
+  transition: all 0.25s ease-in-out;
+}
+.hbtn:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+  transition: all 0.25s ease-in-out;
+}
+
+
+.div-0 { 
+  height: 2px;
+  background-color: #fff;
+  border-radius: 5px;
+} 
+
+
+.btn-3 { 
+   display: inline-block; 
+   padding: 10px 20px; 
+   font-size: 16px; 
+   color: white; 
+   background-color: rgba(0, 0, 255, 0.2); 
+   border: none; 
+   border-radius: 5px; 
+   box-shadow: 0 0 0 3px rgba(0,0,139,0.5);
+   transition: all 0.25s ease-in-out; 
+}
+.btn-3:hover {
+   box-shadow: 0 0 0 3px darkblue; 
+   transition: all 0.25s ease-in-out; 
+}
+.btn-3:focus { 
+   background: rgba(0,0,0,0.5); 
+   color: #fff; 
+   box-shadow: 0 0 0 3px darkgray; 
+   transition: all 0.25s ease-in-out; 
+}
+</style>
+  
+  <script>
+var renderTrue = true;
+   
+window.addEventListener("scroll",(event) =>{
+  if((this.scrollY/window.innerHeight)*2 > 1){
+   if(renderTrue==true){
+    renderTrue = false;
+   }
+  }else{
+   if(renderTrue==false){
+    renderTrue = true;
+   }
+  }
+  document.getElementById("bd").style.opacity = (this.scrollY/window.innerHeight)*2;
+  document.getElementById("homeItems").style.opacity = 1 - (this.scrollY/window.innerHeight)*2
+  document.getElementById("renderDomElement").style.opacity = 1 - (this.scrollY/window.innerHeight)*2
+  
+  if(this.scrollY/window.innerHeight > 0.2){
+    printString1(" Join the Development", document.getElementById('txt1'))
+  }else if(this.scrollY/window.innerHeight <= 0.01){
+    deleteString1(document.getElementById('txt1'))
+  }
+  if(this.scrollY > document.getElementById('txt2').offsetTop + 15){
+    printString2("Veritnet Official", document.getElementById('txt2'))
+  }else if(this.scrollY/window.innerHeight < document.getElementById('txt2').offsetTop - document.getElementById('txt2').offsetHeight){
+    deleteString2(document.getElementById('txt2'))
+  }
+  
+  if(this.scrollY/window.innerHeight < 0.7){
+    document.getElementsByClassName('div-0')[0].style.width = 100*((this.scrollY/window.innerHeight)+0.2) + '%'
+  }
+  if((this.scrollY-document.getElementsByClassName('div-0')[1].offsetTop) / window.innerHeight < 0.7){
+    document.getElementsByClassName('div-0')[1].style.width = 100*(( (this.scrollY-document.getElementsByClassName('div-0')[1].offsetTop) / window.innerHeight )+0.2) + '%'
+  }
+})
+
+
+printed1 = false;
+function printString1(str, element){
+  if(printed1==false){
+   printed1 = true;
+   var index1 = 0;
+   element.innerHTML = '<span style="color: skyblue">&bull;</span>'
+   var intervalId1 = setInterval(function() {
+    element.innerHTML += str[index1];
+    index1++;
+    if (index1 === str.length) {
+     clearInterval(intervalId1);
+    }
+   }, 25);
+  }
+ }
+function deleteString1(element){
+  if(printed1==true){
+   printed1 = false;
+   element.innerHTML = '<span style="color: skyblue">&bull;</span>';
+  }
+}
+
+printed2 = false;
+function printString2(str, element){
+  if(printed2==false){
+   printed2 = true;
+   var index2 = 0;
+   var newstr2 = '';
+   var intervalId2 = setInterval(function() {
+    newstr2 += str[index2];
+    element.innerHTML = newstr2 + ' <span style="color: skyblue">&bull;</span>';
+    index2++;
+    if (index2 === str.length) {
+     clearInterval(intervalId2);
+    }
+   }, 25);
+  }
+ }
+function deleteString2(element){
+  if(printed2==true){
+   printed2 = false;
+   element.innerHTML = '<span style="color: skyblue">&bull;</span>';
+  }
+}
+ 
+   
+ function smoothScroll(targetId) {
+   var target = document.getElementById(targetId);
+   var targetPosition = target.offsetTop + 0.9*window.innerHeight;
+   window.scrollTo({
+     top: targetPosition,
+     behavior: 'smooth'
+   });
+ }
+  </script>
+  
+  <script type="module">
+var loaded = false;
+ 
+setTimeout(()=>{
+ var overlay_bg = document.getElementById('overlay_bg');
+ var words = document.getElementById('words');
+ 
+ var loading = document.getElementById('loading');
+ var itv = setInterval(()=>{
+  if(loaded){
+   clearInterval(itv);
+   var opacity_bg = 1;
+   words.innerHTML = `Build Incredible Things Together<div style="white-space: nowrap; margin: 0; padding: 0"><h5 class="hbtn" onclick="smoothScroll('d1')">Learn More</h5><h5 style="color: transparent; display: inline-block">.</h5><h5 class="hbtn" onclick="smoothScroll('d1')">Development</h5></div>`;
+   window.scrollTo(0,0);
+   var intervalId = setInterval(function() {
+     opacity_bg -= 0.04;
+     overlay_bg.style.opacity = opacity_bg;
+     loading.style.opacity = opacity_bg;
+     words.style.opacity = 1-opacity_bg;
+     if (opacity_bg <= 0) {
+       clearInterval(intervalId);
+       document.body.removeChild(overlay_bg);
+     }
+   }, 15);
+  }
+ }, 100)
+ 
+ renderer.domElement.addEventListener('load', onload);
+ document.body.setAttribute('style','background: #000 no-repeat center center;background-size: cover;background-attachment: fixed;')
+},10);
+  
+  
+    import * as THREE from 'https://unpkg.com/three@0.128.0/build/three.module.js';
+    
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({antialias:true});
+    renderer.physicallyCorrectLights = true;
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.domElement.style.position = 'fixed';
+    renderer.domElement.id = 'renderDomElement';
+    document.body.appendChild(renderer.domElement);
+    
+    window.addEventListener("resize", () => {
+     camera.aspect = window.innerWidth / window.innerHeight;
+     camera.updateProjectionMatrix();
+     renderer.setSize(window.innerWidth, window.innerHeight);
+     renderer.setPixelRatio(window.devicePixelRatio);
+    });
+    
+    const objectsCount = 30000;
+    
+    for (let i = 0; i < objectsCount; i++) {
+      const geometry = new THREE.BoxGeometry(0.05, 0.05, 0.05);
+      const material = new THREE.MeshBasicMaterial({ color: Math.random() * 0xffffff });
+      const cube = new THREE.Mesh(geometry, material);
+      cube.position.x = Math.random() * 100 - 50;
+      cube.position.y = Math.random() * 100 - 50;
+      cube.position.z = Math.random() * 100 - 50;
+      
+      scene.add(cube);
+    }
+    
+    camera.position.z = 5;
+    
+    var center = new THREE.Vector3(0, 0, 0);
+
+    var angle = 0;
+    var radius = 10;
+    
+    function animate() {
+     if(renderTrue){
+      if(loaded==false){
+       loaded = true;
+      }
+      requestAnimationFrame(animate);
+    
+      camera.position.x = center.x + radius * Math.cos(angle);
+      camera.position.z = center.z + radius * Math.sin(angle);
+      camera.translateZ(-1);
+      angle -= 0.01;
+      
+      camera.rotation.y = -(360 / (2* Math.PI)) * angle * Math.PI / 180;
+      camera.rotation.z += 0.002;
+    
+      scene.children.forEach((obj) => {
+       obj.rotation.z += 0.01;
+      });
+    
+      renderer.render(scene, camera);
+     }else{
+      requestAnimationFrame(animate);
+     }
+    }
+
+    animate();
+    
+  </script>
+  
+  <style>
+    body { margin: 0; }
+  </style>
+</head>
+<body bgcolor="black">
+  <div id="overlay_bg"></div>
+ 
+  <div style="width: 100%; padding: 0px; background-color: rgba(24,24,28,0.9); top: 0px; position: fixed; display: flex; z-index: 5" align="left">
+   <h4 style="color: skyblue; padding-left: 15px; padding-right: 20px">VeritNet</h4>
+   <button class="menuBtn" onclick="smoothScroll('d1')">Dev</button>
+   <button class="menuBtn" onclick="smoothScroll('d2')">Contact</button>
+  </div>
+  
+  <div style="position: fixed; top: 38%; width: 100%; padding: 0; margin: 0; z-index: 3" align="center" id="homeItems">
+   <h2 style="color: white; left: 10%; width: 80%; text-shadow: 0 0 10px #fff, 0 0 10px #fff, 0 0 30px #fff, 0 0 40px black" align="center">VeritNet Engine</h2>
+   <h3 style="color: white; left: 10%; width: 80%; opacity: 0; position: absolute; margin: 0" align="center" id="words"></h3>
+   <div id="loading"><div></div><div></div><div></div></div>
+  </div>
+  <div style="z-index: 2; background: linear-gradient(transparent, black); width: 100%; height: 30%; bottom: 0; position: fixed"></div>
+  
+  
+  <div style="width: 100%; z-index: 4; padding: 0; top: 100%; position: absolute; opacity: 0; padding: 0" id="bd">
+   
+   <h2 style="color: white; padding-left: 1rem" class="typing" id="d1"><span style="color: limegreen">&bull;</span>Veritnet Engine is in<br><span style="color: transparent">&bull;</span>Open Source Development</h2>
+   <div class="div-1" style="margin-left: 1rem; width: 70%; height: auto">
+    <h3 style="color: white; padding-left: 1em" id="txt1">&bull;</h3>
+    <div class="div-0"></div>
+    <h4 style="color: white; padding-left: 1em">Veritnet Engine is an <b style="color: lightblue">open source</b> machine learning engine under the <i>Apache-2.0 license.</i><br><br>
+    <b style="color: orange">Anyone</b> is welcome to participate in the development of the project, whether you are good at coding&#128187; or love <b style="color: lightblue">Neural Networks</b> and <b style="color: lightblue">Deep Learning</b>.VeritNet will never be changed to closed source commercial software.<br><br>
+    If you want to get started quickly, you can quickly download the project in <a style="padding-bottom: 0.2px; border-bottom: 1px solid deepskyblue; color: skyblue; text-decoration: none" href="https://github.com/BKLAI/VeritNet">VeritNet's repository</a> on Github and start developing. We have thorough code documentation and comments, and the community will do what they can to help you out.&#127881;
+    </h4>
+   </div>
+   
+   
+   <br><br><br>
+   
+   <h2 style="color: white; padding-right: 1rem" class="typing" align="right" id="d2">Stay in contact<span style="color: limegreen">&bull;</span><br>and Get the latest<span style="color: transparent">&bull;</span></h2>
+   
+  <div style="width: 100%" align="right">
+   <div class="div-1" style="margin-right: 1rem; width: 70%; height: auto" align="right">
+    <h3 style="color: white; padding-right: 1em" id="txt2">&bull;</h3>
+    <div class="div-0"></div>
+    <br>
+    <div style="width: 100%" align="center">
+    <svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" fill="currentColor" class="bi bi-github" viewBox="0 0 16 16" style="padding: 0.2em">
+     <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/>
+    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" fill="currentColor" class="bi bi-twitter-x" viewBox="0 0 16 16" style="padding: 0.2em">
+     <path d="M12.6.75h2.454l-5.36 6.142L16 15.25h-4.937l-3.867-5.07-4.425 5.07H.316l5.733-6.57L0 .75h5.063l3.495 4.633L12.601.75Zm-.86 13.028h1.36L4.323 2.145H2.865z"/>
+    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" fill="currentColor" class="bi bi-youtube" viewBox="0 0 16 16" style="padding: 0.2em;">
+     <path d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.101.38.172.883.22 1.402l.01.104.022.26.008.104c.065.914.073 1.77.074 1.957v.075c-.001.194-.01 1.108-.082 2.06l-.008.105-.009.104c-.05.572-.124 1.14-.235 1.558a2.01 2.01 0 0 1-1.415 1.42c-1.16.312-5.569.334-6.18.335h-.142c-.309 0-1.587-.006-2.927-.052l-.17-.006-.087-.004-.171-.007-.171-.007c-1.11-.049-2.167-.128-2.654-.26a2.01 2.01 0 0 1-1.415-1.419c-.111-.417-.185-.986-.235-1.558L.09 9.82l-.008-.104A31 31 0 0 1 0 7.68v-.123c.002-.215.01-.958.064-1.778l.007-.103.003-.052.008-.104.022-.26.01-.104c.048-.519.119-1.023.22-1.402a2.01 2.01 0 0 1 1.415-1.42c.487-.13 1.544-.21 2.654-.26l.17-.007.172-.006.086-.003.171-.007A100 100 0 0 1 7.858 2zM6.4 5.209v4.818l4.157-2.408z"/>
+    </svg>
+    <img src="https://www.svgrepo.com/show/345504/bilibili.svg" style="width: 2em; height: 2em; padding: 0.2em; filter: invert(100%);"/>
+    </div>
+    <h4 style="color: white; padding-right: 1em" align="right">When you are involved in <b style="color: lightblue">VeritNet</b> development, use, or encounter any problems in the field of <b style="color: lightblue">Machine Learning</b>, or want to discuss with us, you are always welcome to <b style="color: lightblue">communicate</b> through<br>Github, X, Youtube, Bilibili and other channels.<br><br>
+     <b style="color: lightgray">To communicate&#128172; directly and openly with anyone, discussing the most important topics without any embellishments, is the most effective way to make progress.</b>
+    </h4>
+   </div>
+  </div>
+  <div style="width: 100%; height: 5rem"></div>
+  
+  <div style="background: url(https://images.unsplash.com/photo-1500534623283-312aade485b7) no-repeat center center; background-size: cover; background-attachment: fixed; width: 100%; min-height: 200%; border: none; z-index: 3; position: absolute">
+   <div style="color: white; z-index: 4; top: 10%; position: absolute; width: 100%">
+    <h1 align="center">AI for Everyone</h1>
+    <h4 align="center" style="padding: 2rem">"My theory behind a maximally curious, maximally truthful AI as being the safest approach is, I think to a superintelligence, humanity is much more interesting than not humanity" - Elon Musk</h4>
+    
+    <div style="padding-top: 30%"></div>
+    
+    <div style="background-color: rgba(0,0,0,0.35); position: absolute; width: 100%; backdrop-filter: blur(5px); color: transparent" align="center">
+     <div style="padding-top: 30%"></div>
+     <h2 style="color: white" align="center">Start Your Journey</h2>
+     <h4 align="center" style="color: white">Veritnet Engine will constantly strive to be the best in every detail.<br>Join Veritnet and do what you think is coolest!</h4>
+     <button class="btn-3" onclick="smoothScroll('d1')">Develop</button>.
+     <button class="btn-3">Preview</button>
+     <div style="padding-top: 30%"></div>
+     
+     <div style="width: 100%; background-color: black; height: 200%; position: absolute" align="center">
+      <br><br><br>
+      <h3 style="color: darkgray">AI.Binklings.com</h3>
+      <h5 style="color: darkgray">Background Image Provided By https://unsplash.com/photos/silhoutte-of-mountains-during-sunset-dQejX2ucPBs</h5>
+     </div>
+    </div>
+    
+   </div>
+  </div>
+  
+  </div>
+</body>
+</html>
