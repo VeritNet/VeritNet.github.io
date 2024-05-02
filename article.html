@@ -217,7 +217,7 @@ img {
 
 <body bgcolor="#0f1418">
 <div class="cover"></div>
-<h4 style="color: lightgray; position: fixed; left: 25%; width: 50%; top: 40%; z-index: 5;" align="center" id="loadingHint"></h4>
+<h4 style="color: darkgray; position: fixed; left: 5%; width: 90%; top: 40%; z-index: 5;" align="center" id="loadingHint"></h4>
 <div class="cover2" onclick="closeNav()" ></div>
 <button onclick="openNav()" style="" class="menu"></button>
 <div class="content" id="main">
@@ -228,7 +228,7 @@ img {
   
   <div onclick="closeNav()" class="content2" id="title" style="margin-top: 2.7em; margin-left: 260px;">
     <h2 id="titleText"></h2>
-    <h5 style="color: darkgray; white-space: nowrap" id="timeText">૮₍ •᎔•₎ა</h5>
+    <h5 style="color: darkgray; white-space: nowrap" id="timeText">Something went wrong.</h5>
   </div>
   
   <div id="content">
@@ -252,6 +252,7 @@ img {
 <script>
 navOpened = true;
 toggleMenu();
+document.getElementById('loadingHint').innerHTML = 'Connecting to Global Network<br>Loading from Github Pages';
 
 function openNav() {
   if (navOpened) {
@@ -285,9 +286,9 @@ function replaceAll(str, target, replacement) {
  return str.replace(regex, replacement);
 }
 
-const paramsStr = window.location.search
-const params = new URLSearchParams(paramsStr)
-const htmlUrl = 'https://ai.binklings.com/a/' + params.get('type') + '/' + params.get('page') + '.html';
+paramsStr = window.location.search
+params = new URLSearchParams(paramsStr)
+htmlUrl = 'https://ai.binklings.com/a/' + params.get('type') + '/' + params.get('page') + '.html';
 
 
 elements = document.querySelectorAll('.list-item');
@@ -322,6 +323,7 @@ function loadPage(pageUrl, pageTitle, pageType){
      document.getElementById('content').innerHTML = res[1];
      document.getElementById('titleText').innerText = replaceAll(pageTitle, '_', ' ');
      document.getElementById('timeText').innerText = res[0];
+     document.getElementById('loadingHint').innerHTML = 'Connecting to Global Network<br>Waiting for Cloudflare';
      slitv2 = setInterval(()=>{
       if(finishedL){
        finishedL = false;
@@ -341,19 +343,50 @@ function loadPage(pageUrl, pageTitle, pageType){
     }
    }, 20)
   } else {
-    uncover();
     document.getElementById('titleText').innerText = this.status;
     document.getElementById('content').innerHTML = '<h4>Well, we seem to have a problem here.<br>Please check if the access link is correct.<br>If the problem continues, you can report it to BINKLINGS Veritnet<br><br>Error Message: '+this.status + ' ' + this.statusText+'</h4>';
+    
+    document.getElementById('loadingHint').innerHTML = 'Connecting to Global Network<br>Waiting for Cloudflare';
+    slitv2 = setInterval(()=>{
+      if(finishedL){
+       finishedL = false;
+       uncover();
+       clearInterval(slitv2);
+      }
+     }, 20)
+     slitv3 = setInterval(()=>{
+      activeElementRequests = checkActiveElementRequests();
+      if (activeElementRequests.length > 0) {
+      }else{
+       finishedL = true;
+       clearInterval(slitv3);
+      }
+     })
   }
  }
  xhr.send();
 }
 loadPage(htmlUrl, params.get('page'), params.get('type'));
 
+function updateURLParams(newParams) {
+ currentURL = new URL(window.location.href);
+ newSearchParams = new URLSearchParams(newParams);
+ for (const [key, value] of newSearchParams) {
+  currentURL.searchParams.append(key, value);
+ }
+ window.history.pushState(null, '', currentURL);
+}
+
 var finishedA = false
 function loadNewPage(pageUrl, pageTitle, pageType){
- cover3();
- loadPage(pageUrl + '.html', pageTitle, pageType);
+ console.log("jkl");
+ paramsStr = window.location.search
+ params = new URLSearchParams(paramsStr)
+ if(params.get('page')!==pageTitle){
+  updateURLParams('type='+pageType+'&page='+pageTitle);
+  cover3();
+  loadPage(pageUrl + '.html', pageTitle, pageType);
+ }
 }
 
 
@@ -373,7 +406,7 @@ function toggleMenu() {
 
 
 function cover3(){
- document.getElementById('loadingHint').textContent = 'Connecting to Global Network';
+ document.getElementById('loadingHint').innerHTML = 'Connecting to Global Network<br>Loading from Github Pages';
  var ti = 100;
  var itv = setInterval(()=>{
   ti -= 1
@@ -394,7 +427,7 @@ function uncover(){
   document.getElementById('loadingHint').style.opacity = (100-ti)/100;
   if(ti>=100){
    closeNav();
-   document.getElementById('loadingHint').textContent = '';
+   document.getElementById('loadingHint').innerHTML = '';
    clearInterval(itv);
   }
  }, 6)
