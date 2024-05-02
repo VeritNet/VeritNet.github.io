@@ -240,7 +240,7 @@ img {
    <div class="progress1"></div>
    <div style="width: 90%; height: background-color: rgb(25, 29, 34); padding: 10px;">
     
-    <button type="link" class="list-item" onclick="loadNewPage('http://ai.binklings.com/a/Blogs/Home', 'Home', 'Blogs')">
+    <button type="link" class="list-item" onclick="loadNewPage('https://ai.binklings.com/a/Blogs/Home', 'Home', 'Blogs')">
      <span>Blogs</span>
     </button>
     
@@ -287,7 +287,7 @@ function replaceAll(str, target, replacement) {
 
 const paramsStr = window.location.search
 const params = new URLSearchParams(paramsStr)
-const htmlUrl = 'http://ai.binklings.com/a/' + params.get('type') + '/' + params.get('page') + '.html';
+const htmlUrl = 'https://ai.binklings.com/a/' + params.get('type') + '/' + params.get('page') + '.html';
 
 
 elements = document.querySelectorAll('.list-item');
