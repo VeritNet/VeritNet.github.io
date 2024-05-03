@@ -217,7 +217,7 @@ img {
 
 <body bgcolor="#0f1418">
 <div class="cover"></div>
-<h4 style="color: darkgray; position: fixed; left: 5%; width: 90%; top: 40%; z-index: 5;" align="center" id="loadingHint"></h4>
+<h4 style="color: gray; position: fixed; left: 5%; width: 90%; top: 40%; z-index: 5;" align="center" id="loadingHint"></h4>
 <div class="cover2" onclick="closeNav()" ></div>
 <button onclick="openNav()" style="" class="menu"></button>
 <div class="content" id="main">
@@ -251,6 +251,7 @@ img {
 
 <script>
 navOpened = true;
+finishedA = true;
 toggleMenu();
 document.getElementById('loadingHint').innerHTML = 'Connecting to Global Network<br>Loading from Github Pages';
 
@@ -343,47 +344,51 @@ function loadPage(pageUrl, pageTitle, pageType){
     }
    }, 20)
   } else {
-    document.getElementById('titleText').innerText = this.status;
-    document.getElementById('content').innerHTML = '<h4>Well, we seem to have a problem here.<br>Please check if the access link is correct.<br>If the problem continues, you can report it to BINKLINGS Veritnet<br><br>Error Message: '+this.status + ' ' + this.statusText+'</h4>';
+    slitv = setInterval(()=>{
+      if(finishedA){
+        finishedA = false;
+        document.getElementById('titleText').innerText = this.status;
+        document.getElementById('content').innerHTML = '<h4>Well, we seem to have a problem here.<br>Please check if the access link is correct.<br>If the problem continues, you can report it to BINKLINGS Veritnet<br><br>Error Message: '+this.status + ' ' + this.statusText+'</h4>';
     
-    document.getElementById('loadingHint').innerHTML = 'Connecting to Global Network<br>Waiting for Cloudflare';
-    slitv2 = setInterval(()=>{
-      if(finishedL){
-       finishedL = false;
-       uncover();
-       clearInterval(slitv2);
+        document.getElementById('loadingHint').innerHTML = 'Connecting to Global Network<br>Waiting for Cloudflare';
+        slitv2 = setInterval(()=>{
+          if(finishedL){
+            finishedL = false;
+            uncover();
+            clearInterval(slitv2);
+          }
+        }, 20)
+        slitv3 = setInterval(()=>{
+          activeElementRequests = checkActiveElementRequests();
+          if (activeElementRequests.length > 0) {
+          }else{
+            finishedL = true;
+            clearInterval(slitv3);
+          }
+        })
+        clearInterval(slitv);
       }
-     }, 20)
-     slitv3 = setInterval(()=>{
-      activeElementRequests = checkActiveElementRequests();
-      if (activeElementRequests.length > 0) {
-      }else{
-       finishedL = true;
-       clearInterval(slitv3);
-      }
-     })
+    }, 20)
   }
  }
  xhr.send();
 }
 loadPage(htmlUrl, params.get('page'), params.get('type'));
 
-function updateURLParams(newParams) {
- currentURL = new URL(window.location.href);
- newSearchParams = new URLSearchParams(newParams);
- for (const [key, value] of newSearchParams) {
-  currentURL.searchParams.append(key, value);
- }
- window.history.pushState(null, '', currentURL);
+function updateURLParams(type, page) {
+  urlParams = new URLSearchParams(window.location.search);
+  urlParams.set('type', type);
+  urlParams.set('page', page);
+  newUrl = new URL(window.location);
+  newUrl.search = urlParams.toString();
+  history.pushState({}, '', newUrl);
 }
 
-var finishedA = false
 function loadNewPage(pageUrl, pageTitle, pageType){
- console.log("jkl");
  paramsStr = window.location.search
  params = new URLSearchParams(paramsStr)
  if(params.get('page')!==pageTitle){
-  updateURLParams('type='+pageType+'&page='+pageTitle);
+  updateURLParams(pageType, pageTitle);
   cover3();
   loadPage(pageUrl + '.html', pageTitle, pageType);
  }
