@@ -301,7 +301,7 @@ elements.forEach(element => {
 
 
 
-function checkActiveElementRequests() { var elementsWithSrc = document.querySelectorAll('[src]'); var activeRequests = []; elementsWithSrc.forEach(function(element) { if(element.complete !== undefined) { if (!element.complete) { activeRequests.push(element); } } else { if (element.readyState !== 'complete') { activeRequests.push(element); } } }); return activeRequests; }
+function checkActiveElementRequests() { var elementsWithSrc = document.querySelectorAll('img'); var activeRequests = []; elementsWithSrc.forEach(function(element) { if(element.complete !== undefined) { if (!element.complete) { activeRequests.push(element); } } else { if (element.readyState !== 'complete') { activeRequests.push(element); } } }); return activeRequests; }
 
 var finishedL = false;
 function loadPage(pageUrl, pageTitle, pageType){
