@@ -269,9 +269,6 @@ img {
   <div id="content">
   </div>
 
-  <br>
-  <div style="width: 90%; padding: 1rem; background-color: skyblue; border-radius: 1em"><h3>Keep up to date on Veritnet Engine development</h3><input id="userEmailAddress" style="border: 1px solid purple; border-radius: 0.8em; width: 86%; padding: 0.25em; background-color: lightblue; color: darkblue; font-size: 1.15em; padding-left: 0.5em; padding-right: 0.5em" placeholder="YourEmail@example.com"/><br><button type="link" class="list-item" id="sendEmailAddress" onclick="sea()"><span>Subscribe</span></button><h4>By submitting your email address, you will be notified by email when significant progress/major updates/releases are made to Veritnet Engine. You can prevent BINKLINGS VeritNet from continuing to send you such messages by replying to the message "u".</h4></div>
-
 </div>
 
   <div class="sidebar" id="sidebar" align="center">
@@ -501,35 +498,4 @@ function uncover2(){
   }
  }, 8)
 }
-
-
-
-if(localStorage.getItem("sendEmailAddress")!=null){
-  document.getElementById('sendEmailAddress').remove();
-  document.getElementById("userEmailAddress").disabled = true;
-  document.getElementById("userEmailAddress").value = localStorage.getItem("sendEmailAddress");
-  document.getElementById("userEmailAddress").style.color = 'green';
-}
-function SUSERq(email) {
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', 'https://s.ai.binklings.com/subscribeNews?email=' + encodeURIComponent(email), true);
-    xhr.onreadystatechange = function() {
-      if (xhr.readyState === 4 && xhr.status === 200) {
-        alert("Submitted successfully, thank you!");
-      }
-    };
-    xhr.send();
-}
-  function sea(){
-   if(localStorage.getItem("sendEmailAddress")!=null){
-    var userEmailAddress = document.getElementById('userEmailAddress').value;
-    if(userEmailAddress.includes('@') && userEmailAddress.includes('.')){
-      localStorage.setItem("sendEmailAddress", userEmailAddress);
-      document.getElementById("sendEmailAddress").disabled = true;
-      SUSERq(userEmailAddress)
-    }else{
-      alert("Please check if your email address format is correct, thank you!");
-    }
-   }
-  }
 </script>
