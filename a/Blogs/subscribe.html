@@ -1,0 +1,107 @@
+<style>
+.list-item {
+  color: white;
+  font-size: 1.1em;
+  width: 90%;
+  padding-top: 0.9em;
+  padding-bottom: 0.9em;
+  background-color: transparent;
+  border-radius: 100px;
+  overflow: hidden;
+  border: none;
+  position: relative;
+  z-index: 1;
+  transition: 0.5s;
+}
+
+.list-item:hover {
+  background-color: rgba(42, 60, 95, 0.6);
+  transition: 0.3s;
+}
+
+.list-item:hover::before {
+  background-color: rgba(33, 60, 130, 0.9);
+  border-radius: 100px
+}
+
+.list-item::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0%;
+  left: 0%;
+  transform: scale(0, 1);
+  border-radius: 100px;
+  transition: 0.6s;
+  z-index: -1;
+}
+
+.list-item:focus::before {
+  transform: scale(1, 1);
+}
+
+.list-item:focus {
+  color: #fcf3d1;
+  transition: 0.3s;
+}
+
+.list-item span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+}
+
+.list-item span:after {
+  content: '\00BB';
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -0.8rem;
+  transition: 0.5s;
+}
+
+.list-item:hover span {
+  padding-right: 1.2rem;
+}
+
+.list-item:hover span:after {
+  opacity: 1;
+  right: 0;
+}
+</style>
+<body bgcolor="black">
+<div style="width: 90%; padding: 1rem; background-color: skyblue; border-radius: 1em; color: white"><h3>Keep up to date on Veritnet Engine development</h3><input disabled="true" id="userEmailAddress" style="border: 1px solid purple; border-radius: 0.8em; width: 86%; padding: 0.25em; background-color: lightblue; color: darkblue; font-size: 1.15em; padding-left: 0.5em; padding-right: 0.5em" placeholder="YourEmail@example.com"/><button type="link" class="list-item" id="sendEmailAddress" disabled="true" onclick="sendEmailAddress()"><span>Subscribe</span></button><h4>By submitting your email address, you will be notified by email when significant progress/major updates/releases are made to Veritnet Engine. You can prevent BINKLINGS VeritNet from continuing to send you such messages by replying to the message "u".</h4></div>
+</body>
+<script>
+if(localStorage.getItem("sendEmailAddress")!=null){
+  document.getElementById('sendEmailAddress').remove();
+  document.getElementById("userEmailAddress").value = localStorage.getItem("sendEmailAddress");
+  document.getElementById("userEmailAddress").style.color = 'green';
+}else{
+  document.getElementById("userEmailAddress").disabled = false;
+  document.getElementById("sendEmailAddress").disabled = false;
+}
+function SUSERq(email) {
+    var xhr2 = new XMLHttpRequest();
+    xhr2.open('GET', 'https://sai.binklings.com/subscribeNews?email=' + encodeURIComponent(email), true);
+    xhr2.onreadystatechange = function() {
+      alert("Thanks!");
+    };
+    xhr2.send();
+}
+  function sendEmailAddress(){
+    var userEmailAddress = document.getElementById('userEmailAddress').value;
+    if(userEmailAddress.includes('@') && userEmailAddress.includes('.')){
+      localStorage.setItem("sendEmailAddress", userEmailAddress);
+      document.getElementById("sendEmailAddress").disabled = true;
+      document.getElementById('sendEmailAddress').remove();
+      document.getElementById("userEmailAddress").value = localStorage.getItem("sendEmailAddress");
+      document.getElementById("userEmailAddress").style.color = 'green';
+      SUSERq(userEmailAddress)
+    }else{
+      alert("Please check if your email address format is correct, thank you!");
+    }
+  }
+</script>
