@@ -1,18 +1,50 @@
-UTC - May 2, 2024<<</*/configurations/*/>>><h4>Veritnet Engine is an open source machine learning engine. It is based on C++ as the underlying framework, and can train models such as the neural networks you want at breathtaking speeds. Previously, good performance and easier code design usually couldn't exist at the same time. If you wanted to speed up the code to run you needed developers to go deeper into the underlying code to optimize it, and this prevented people from building and debugging new models quickly, so most people chose to sacrifice some of the performance for ease of coding, and they used a variety of machine learning libraries. But now, Veritnet Engine makes it possible for performance and convenience to coexist.</h4>
-    <h3><span style="color: lawngreen">&bull;</span> Blueprints in Model Designing - Accelerating Your Builds</h3>
-    <h4>Blueprint systems have achieved large-scale adoption in many fields, such as physics engine UE5, modeling software Blender, and video software Resolve have similar figures in them. Similarly, the Veritnet Engine takes large stacks of algorithms (e.g., fully-connected neural networks, convolutional layers, dot-product isotropy computation, etc.) pre-coded and integrates them into nodes:</h4>
-    <img src="https://db.binklings.com/VeritNet/blogs/5e20cf27a594a02b8ca83.jpg"/>
-    <h4>Of course, as you can see, the blueprint system shown is obviously not perfect, for example, the data flow is all left-to-right, which does not fit the format of many books or articles.Veritnet is working on improving the blueprint system every day, and Veritnet hopes that the engine will be released with a complete yet easy to use modeling system in place.<br>
-    See the end of this page for details on some of the things being developed (e.g., managing multithreading / doing CUDA interactions in blueprints).</h4>
-    <h3><span style="color: skyblue">&bull;</span> High performance, High efficiency, High speed</h3>
-    <h4>The Veritnet Engine's blueprints differ from Dynamic Computational Graph is that Veritnet uses pre-design-pre-generation-pre-compilation, meaning that code for modules that do not specify that they must be dynamically transformed is automatically generated ahead of time and is not changed again. For example, when the engine considers an 'if(...) else(...)' branch of an 'if(...) else(...)' is not likely to be triggered at all, it will simply not add the 'if else' judgment to the code. Another example is when the engine can be sure that the size of a vector won't change, it doesn't have to call vector.size() over and over again in the code, but instead just brings in a specific number automatically, bringing many performance optimizations.</h4>
-    <h4>One thing that Veritnet Engine doesn't do is give up CPU resources that can be effectively utilized. In the current test, when training MNIST handwritten digit recognition with a fully connected neural network on CPU alone, Veritnet is more than twice as fast as Pytorch (which has been controlled to have the same environment), and on an average laptop equipped with an i7 9050t, it is possible to achieve about 1.2 seconds to finish training 5000 MNIST images and guarantee more than 80% of test Accuracy (See end of page for specific parameters).</h4>
-    <h4>On the other hand, the necessity of GPUs for training large models is unquestionable, and the Veritnet blueprint system is continually adding more node support already implemented on CPUs for CUDA-based codes.</h4>
-    <h4>As the grassroots portion of the engine is still in major development and the engine is iterating at a fast pace, keep an eye on this page, VeritNet's Github repo, or developer social media for updates.</h4>
-    <div style="width: 90%; height: 2px; background-color: white"></div>
-    <h5>Under development:<br>-Blueprint<br>--Node Manage System<br>--Code Generators<br>-File System</h5>
-    <h5>To be developed:<br>-Blueprint<br>--Multi-thread node system<br>--CUDA Node</h5>
-    <div style="width: 90%; height: 1px; background-color: darkgray"></div>
-    <h5>Intel ( R ) Core ( TM ) i7-9750H CPU @2.60GHz<br>Memory: 32.0 GB Cores: 6 Logical Processors: 12<br>Model Architecture: [784, 30 Elu, 10 Softmax]<br>Hyperparameters: Learning Rate: 0.00001<br>Batch Size =5/50<br>1 Round = 1000 Data</h5>
-    <h5>The vertical axis is the elapsed time: the unit is s<br>The horizontal axis is the number of Rounds, totaling 100 Rounds = 100000 Data</h5>
-    <img src="https://db.binklings.com/VeritNet/blogs/73fdf3d2-5eb6-4962-b755-3effd4b49ac4.jpg"/>
+UTC - May 2, 2024<<</*/configurations/*/>>><h4>Veritnet Engine is an open source machine learning engine. It is based on C++ as the underlying framework, and can train models such as the neural networks you want at breathtaking speeds. Previously, good performance and easier code design usually couldn't exist at the same time. If you wanted to speed up the code to run you needed developers to go deeper into the underlying code to optimize it, and this prevented people from building and debugging new models quickly, so most people chose to sacrifice some of the performance for ease of coding, and they used a variety of machine learning libraries. But now, Veritnet Engine makes it possible for performance and convenience to coexist.</h4> 
+     <h3><span style="color: lawngreen">&bull;</span> Blueprints in Model Designing - Accelerating Your Builds</h3> 
+     <h4>Blueprint systems have achieved large-scale adoption in many fields, such as physics engine UE5, modeling software Blender, and video software Resolve have similar figures in them. Similarly, the Veritnet Engine takes large stacks of algorithms (e.g., fully-connected neural networks, convolutional layers, dot-product isotropy computation, etc.) pre-coded and integrates them into nodes:</h4> 
+     <img src="https://db.binklings.com/VeritNet/blogs/5e20cf27a594a02b8ca83.jpg"/> 
+     <h4>Of course, as you can see, the blueprint system shown is obviously not perfect, for example, the data flow is all left-to-right, which does not fit the format of many books or articles.Veritnet is working on improving the blueprint system every day, and Veritnet hopes that the engine will be released with a complete yet easy to use modeling system in place.<br> 
+     See the end of this page for details on some of the things being developed (e.g., managing multithreading / doing CUDA interactions in blueprints).</h4> 
+     <h3><span style="color: skyblue">&bull;</span> High performance, High efficiency, High speed</h3> 
+     <h4>The Veritnet Engine's blueprints differ from Dynamic Computational Graph is that Veritnet uses pre-design-pre-generation-pre-compilation, meaning that code for modules that do not specify that they must be dynamically transformed is automatically generated ahead of time and is not changed again. For example, when the engine considers an 'if(...) else(...)' branch of an 'if(...) else(...)' is not likely to be triggered at all, it will simply not add the 'if else' judgment to the code. Another example is when the engine can be sure that the size of a vector won't change, it doesn't have to call vector.size() over and over again in the code, but instead just brings in a specific number automatically, bringing many performance optimizations.</h4> 
+     <h4>One thing that Veritnet Engine doesn't do is give up CPU resources that can be effectively utilized. In the current test, when training MNIST handwritten digit recognition with a fully connected neural network on CPU alone, Veritnet is more than twice as fast as Pytorch (which has been controlled to have the same environment), and on an average laptop equipped with an i7 9050t, it is possible to achieve about 1.2 seconds to finish training 5000 MNIST images and guarantee more than 80% of test Accuracy (See end of page for specific parameters).</h4> 
+     <h4>On the other hand, the necessity of GPUs for training large models is unquestionable, and the Veritnet blueprint system is continually adding more node support already implemented on CPUs for CUDA-based codes.</h4> 
+     <h4>As the grassroots portion of the engine is still in major development and the engine is iterating at a fast pace, keep an eye on this page, VeritNet's Github repo, or developer social media for updates.</h4> 
+     <div style="width: 90%; height: 2px; background-color: white"></div> 
+     <h5>Under development:<br>-Blueprint<br>--Node Manage System<br>--Code Generators<br>-File System</h5> 
+     <h5>To be developed:<br>-Blueprint<br>--Multi-thread node system<br>--CUDA Node</h5> 
+     <div style="width: 90%; height: 1px; background-color: darkgray"></div> 
+     <h5>Intel ( R ) Core ( TM ) i7-9750H CPU @2.60GHz<br>Memory: 32.0 GB Cores: 6 Logical Processors: 12<br>Model Architecture: [784, 30 Elu, 10 Softmax]<br>Hyperparameters: Learning Rate: 0.00001<br>Batch Size =5/50<br>1 Round = 1000 Data</h5> 
+     <h5>The vertical axis is the elapsed time: the unit is s<br>The horizontal axis is the number of Rounds, totaling 100 Rounds = 100000 Data</h5> 
+     <img src="https://db.binklings.com/VeritNet/blogs/73fdf3d2-5eb6-4962-b755-3effd4b49ac4.jpg"/>
+     <br>
+     <div style="width: 90%; padding: 1rem; background-color: skyblue; border-radius: 1em"><h3>Keep up to date on Veritnet Engine development</h3><input disabled="true" id="userEmailAddress" style="border: 1px solid purple; border-radius: 0.8em; width: 86%; padding: 0.25em; background-color: lightblue; color: darkblue; font-size: 1.15em; padding-left: 0.5em; padding-right: 0.5em" placeholder="YourEmail@example.com"/><button type="link" class="list-item" id="sendEmailAddress" disabled="true" onclick="sendEmailAddress()"><span>Subscribe</span></button><h4>By submitting your email address, you will be notified by email when significant progress/major updates/releases are made to Veritnet Engine. You can prevent BINKLINGS VeritNet from continuing to send you such messages by replying to the message "u".</h4></div>
+<script>
+if(localStorage.getItem("sendEmailAddress")!=null){
+  document.getElementById('sendEmailAddress').remove();
+  document.getElementById("userEmailAddress").value = localStorage.getItem("sendEmailAddress");
+  document.getElementById("userEmailAddress").style.color = 'green';
+}else{
+  document.getElementById("userEmailAddress").disabled = false;
+  document.getElementById("sendEmailAddress").disabled = false;
+}
+function SUSERq(email) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', 'https://s.ai.binklings.com/subscribeNews?email=' + encodeURIComponent(email), true);
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        alert("Submitted successfully, thank you!");
+      }
+    };
+    xhr.send();
+}
+  function sendEmailAddress(){
+    var userEmailAddress = document.getElementById('userEmailAddress').value;
+    if(userEmailAddress.includes('@') && userEmailAddress.includes('.')){
+      localStorage.setItem("sendEmailAddress", userEmailAddress);
+      document.getElementById("sendEmailAddress").disabled = true;
+      SUSERq(userEmailAddress)
+    }else{
+      alert("Please check if your email address format is correct, thank you!");
+    }
+  }
+</script>
