@@ -1,7 +1,3 @@
----
-title: BINKLINGS AI learning 第一册
----
-
 # 版权
 
 本书开源仓库地址为 https://github.com/VeritNet/AI-Learning
