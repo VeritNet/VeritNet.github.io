@@ -32,6 +32,7 @@ img {
     padding-left: 0.85rem;
     padding-right: 0.15rem;
     caret-color: lightblue;
+    z-index: 1;
 }
 
 #editor h1, #editor h2, #editor h3, #editor h4, #editor h5, #editor h6, #editor img {
@@ -48,6 +49,7 @@ let xhr = new XMLHttpRequest();
 xhr.open("get", 'https://ai.binklings.com/a/Learn/zh_Book_1.html', true);
 xhr.onload = function () {
   if (this.status == 200) {
+    uncover();
     document.getElementById('editor').innerHTML = markdownToHtml(this.responseText);
     codeEditors = document.getElementsByClassName('codeEditor');
     for(i=0;i<codeEditors.length;i++){
