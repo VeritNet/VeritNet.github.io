@@ -1,14 +1,13 @@
 <html>
 <head>
-  <meta charset="utf-8"/>
-
-  <style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
 img {
  border-radius: 1rem;
  width: 95%;
  margin-left: 1.5%;
 }
-
 
 
 .list-item {
@@ -24,6 +23,10 @@ img {
   position: relative;
   z-index: 1;
   transition: 0.5s;
+}
+
+.list-item [data-custom-tag="select"] {
+ color: red;
 }
 
 .list-item:hover {
@@ -198,7 +201,7 @@ img {
  height: 200%;
  top: -100%;
  left: 0px;
- z-index: 2;
+ z-index: 3;
  position: fixed;
 }
 
@@ -208,7 +211,7 @@ img {
  height: 100%;
  top: 0px;
  left: 0px;
- z-index: 1;
+ z-index: 3;
  opacity: 0.5;
  position: fixed;
 }
@@ -278,6 +281,10 @@ img {
     <button type="link" class="list-item" onclick="loadNewPage('https://ai.binklings.com/a/Blogs/Home', 'Home', 'Blogs')">
      <span>Blogs</span>
     </button>
+    <br><br>
+    <button type="link" class="list-item" onclick="loadNewPage('https://ai.binklings.com/a/Learn/Home', 'Home', 'Learn')">
+     <span>Learn</span>
+    </button>
     
    </div>
   </div>
@@ -335,7 +342,22 @@ elements.forEach(element => {
 
 
 
-function checkActiveElementRequests() { var elementsWithSrc = document.querySelectorAll('img'); var activeRequests = []; elementsWithSrc.forEach(function(element) { if(element.complete !== undefined) { if (!element.complete) { activeRequests.push(element); } } else { if (element.readyState !== 'complete') { activeRequests.push(element); } } }); return activeRequests; }
+function checkActiveElementRequests() {
+  var elementsWithImg = document.querySelectorAll('img');
+  var activeRequests = [];
+  elementsWithImg.forEach(function(element) {
+    if(element.complete !== undefined) {
+      if (!element.complete) {
+        activeRequests.push(element);
+      }
+    } else {
+      if (element.readyState !== 'complete') {
+        activeRequests.push(element);
+      }
+    }
+  });
+  return activeRequests;
+}
 
 var finishedL = false;
 function loadPage(pageUrl, pageTitle, pageType){
@@ -361,6 +383,22 @@ function loadPage(pageUrl, pageTitle, pageType){
      slitv2 = setInterval(()=>{
       if(finishedL){
        finishedL = false;
+       
+       paramsStr = window.location.search
+       params = new URLSearchParams(paramsStr)
+       elements = document.querySelectorAll('.list-item');
+       elements.forEach(element => {
+        if (element.innerText === params.get('type')) {
+         element.style.backgroundColor = 'rgba(33, 60, 130, 0.9)';
+        } else {
+         element.style.backgroundColor = 'transparent';
+         element.style.cssText = '';
+         element.offsetHeight;
+         element.classList.add('list-item');
+         element.offsetHeight;
+        }
+       });
+       
        uncover();
        clearInterval(slitv2);
       }
@@ -419,7 +457,7 @@ function updateURLParams(type, page) {
 function loadNewPage(pageUrl, pageTitle, pageType){
  paramsStr = window.location.search
  params = new URLSearchParams(paramsStr)
- if(params.get('page')!==pageTitle){
+ if(params.get('page')!==pageTitle || params.get('type')!==pageType){
   updateURLParams(pageType, pageTitle);
   cover3();
   loadPage(pageUrl + '.html', pageTitle, pageType);
@@ -474,6 +512,7 @@ function cover2(){
   h4.style.wordBreak = 'break-all';
  });
  
+ document.getElementsByClassName('cover2')[0].style.top = '0';
  var ti = 0;
  var itv = setInterval(()=>{
   ti += 0.01
@@ -494,6 +533,7 @@ function uncover2(){
     h4.style.wordBreak = 'break-word';
    });
    
+   document.getElementsByClassName('cover2')[0].style.top = '-200%';
    clearInterval(itv);
   }
  }, 8)
