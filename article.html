@@ -280,11 +280,11 @@
    <div class="progress1"></div>
    <div style="width: 90%; height: background-color: rgb(25, 29, 34); padding: 10px;">
     
-    <button type="link" class="list-item" onclick="loadNewPage('https://ai.binklings.com/a/Blogs/Home', 'Home', 'Blogs')">
+    <button type="link" class="list-item" onclick="loadNewPage('https://www.veritnet.com/a/Blogs/Home', 'Home', 'Blogs')">
      <span>Blogs</span>
     </button>
     <br><br>
-    <button type="link" class="list-item" onclick="loadNewPage('https://ai.binklings.com/a/Learn/Home', 'Home', 'Learn')">
+    <button type="link" class="list-item" onclick="loadNewPage('https://www.veritnet.com/a/Learn/Home', 'Home', 'Learn')">
      <span>Learn</span>
     </button>
     
@@ -332,7 +332,7 @@ function replaceAll(str, target, replacement) {
 
 paramsStr = window.location.search
 params = new URLSearchParams(paramsStr)
-htmlUrl = 'https://ai.binklings.com/a/' + params.get('type') + '/' + params.get('page') + '.html';
+htmlUrl = 'https://www.veritnet.com/a/' + params.get('type') + '/' + params.get('page') + '.html';
 
 
 elements = document.querySelectorAll('.list-item');
@@ -546,7 +546,7 @@ function uncover2(){
 <script>
 function book1_rq(){
   let xhr = new XMLHttpRequest();
-  xhr.open("get", 'https://ai.binklings.com/a/Learn/zh_Book_1.html', true);
+  xhr.open("get", 'https://www.veritnet.com/a/Learn/zh_Book_1.html', true);
   xhr.onload = function () {
     if (this.status == 200) {
       document.getElementById('editor').innerHTML = markdownToHtml(this.responseText);
