@@ -27,10 +27,18 @@ img {
     caret-color: lightblue;
 }
 
+body::-webkit-scrollbar {
+  display: none;
+}
+body {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
 #editor h1, #editor h2, #editor h3, #editor h4, #editor h5, #editor h6, #editor img {
   display: inline-block;
 }
 </style>
 <body bgcolor="#0f1418">
-  <div style="width: 95%; position: fixed" id="editor"></div>
+  <div style="width: 100%; position: fixed" id="editor"></div>
 </body>
