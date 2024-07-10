@@ -635,6 +635,8 @@ function markdownToHtml(markdown) {
       return match === '\n' ? '<br>' : match;
     });
 
+    html = html.replace(/\\/g, '');
+
     return html + '<br><br><br><br>';
 }
 </script>
