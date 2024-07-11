@@ -259,7 +259,7 @@
 <div class="cover"></div>
 <div class="pgs" id="loadingHint"><div class="pgsd"></div></div>
 <div class="cover2" onclick="closeNav()" ></div>
-<button onclick="openNav()" style="" class="menu"></button>
+<button onclick="openNav()" class="menu"></button>
 <div class="content" id="main">
   <div style="top: 0px; left: 0px; width: 100%; height: 5rem; position: fixed; background: linear-gradient(rgb(15, 20, 24), transparent)"></div>
   <div style="bottom: 0px; left: 0px; width: 100%; height: 2em; position: fixed; background: linear-gradient(transparent, rgb(15, 20, 24))"></div>
@@ -278,7 +278,7 @@
 
   <div class="sidebar" id="sidebar" align="center">
    <div class="progress1"></div>
-   <div style="width: 90%; height: background-color: rgb(25, 29, 34); padding: 10px;">
+   <div style="width: 90%; background-color: rgb(25, 29, 34); padding: 10px;">
     
     <button type="link" class="list-item" onclick="loadNewPage('https://www.veritnet.com/a/Blogs/Home', 'Home', 'Blogs')">
      <span>Blogs</span>
@@ -401,7 +401,9 @@ function loadPage(pageUrl, pageTitle, pageType){
         }
        });
        
-       book1_rq();
+       if(pageTitle.includes("Book1_")){
+         book1_rq(pageTitle.split("Book1_")[1]);
+       }
        uncover();
        clearInterval(slitv2);
       }
@@ -544,9 +546,13 @@ function uncover2(){
 </script>
 
 <script>
-function book1_rq(){
+function book1_rq(lang){
   let xhr = new XMLHttpRequest();
-  xhr.open("get", 'https://www.veritnet.com/a/Learn/zh_Book_1.html', true);
+  if(lang=="en"){
+    xhr.open("get", 'https://www.veritnet.com/a/Learn/en_Book_1.html', true);
+  }else{
+    xhr.open("get", 'https://www.veritnet.com/a/Learn/zh_Book_1.html', true);
+  }
   xhr.onload = function () {
     if (this.status == 200) {
       document.getElementById('editor').innerHTML = markdownToHtml(this.responseText);
