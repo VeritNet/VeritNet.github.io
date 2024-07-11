@@ -333,6 +333,9 @@ function replaceAll(str, target, replacement) {
 paramsStr = window.location.search
 params = new URLSearchParams(paramsStr)
 htmlUrl = 'https://www.veritnet.com/a/' + params.get('type') + '/' + params.get('page') + '.html';
+if(htmlUrl.includes("https://www.veritnet.com/a/Learn/Book1_")){
+  htmlUrl = "https://www.veritnet.com/a/Learn/Book1";
+}
 
 
 elements = document.querySelectorAll('.list-item');
