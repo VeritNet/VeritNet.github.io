@@ -278,7 +278,7 @@
 
   <div class="sidebar" id="sidebar" align="center">
    <div class="progress1"></div>
-   <div style="width: 90%; background-color: rgb(25, 29, 34); padding: 10px;">
+   <div style="width: 90%; background-color: transparent; padding: 10px;">
     
     <button type="link" class="list-item" onclick="loadNewPage('https://www.veritnet.com/a/Blogs/Home', 'Home', 'Blogs')">
      <span>Blogs</span>
@@ -549,9 +549,9 @@ function uncover2(){
 function book1_rq(lang){
   let xhr = new XMLHttpRequest();
   if(lang=="en"){
-    xhr.open("get", 'https://www.veritnet.com/a/Learn/en_Book_1.html', true);
+    xhr.open("get", 'https://www.veritnet.com/a/Learn/Book1_en.html', true);
   }else{
-    xhr.open("get", 'https://www.veritnet.com/a/Learn/zh_Book_1.html', true);
+    xhr.open("get", 'https://www.veritnet.com/a/Learn/Book1_zh.html', true);
   }
   xhr.onload = function () {
     if (this.status == 200) {
