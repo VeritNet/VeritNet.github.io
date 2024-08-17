@@ -8,10 +8,10 @@
   <title>AI | BINKLINGS</title>
 </head>
 
-<body bgcolor="black" style="padding: 0">
- <div id="bar" align="center"><a class="bar-item" style="animation: fade-in 0.7s ease 0.3s forwards" onclick="loadNewPage('', 'https://www.binklings.com/')">Home</a><a class="bar-item" style="animation: fade-in 0.7s ease 0s forwards;" onclick="smoothScroll('learn')">Learn</a><a class="bar-item" style="animation: fade-in 0.7s ease 0s forwards;">Project</a><a class="bar-item" style="animation: fade-in 0.7s ease 0.3s forwards;">More</a></div>
+<body bgcolor="black" style="padding: 0; font-family: sans-serif;">
+ <div id="bar" align="center"><a class="bar-item" style="animation: fade-in 0.7s ease 0.3s forwards" onclick="loadNewPage('', 'https://www.binklings.com/')">Home</a><a class="bar-item" style="animation: fade-in 0.7s ease 0s forwards;" onclick="smoothScroll('learn')">Learn</a><a class="bar-item" style="animation: fade-in 0.7s ease 0s forwards;" onclick="smoothScroll('projects')">Project</a><a class="bar-item" style="animation: fade-in 0.7s ease 0.3s forwards;">More</a></div>
  <div class="ccontainer">
-  <h2 id="cf" align="center">BINKLINGS AI</h2><
+  <h2 id="cf" align="center">VeritNet</h2><
   <div class="circle"></div>
   <h5 style="color: white; bottom: 5px; position: fixed" id="bgo"></h5>
  </div>
@@ -19,9 +19,9 @@
   <h3 id="output" style="color: white"></h3>
   <div class="div-0"></div>
   <br>
-  <div class="div-1" id="learn" align="left"><h3>| Learning AI</h3><h4 style="padding: 1vh"><b><i>BINKLINGS AI learning</i> is a completely free e-book, in which we will study "Neural Network" and "Deep Learning" in detail. We pay attention to the understanding of knowledge, so we will get to the bottom of the meaning, origin and specific use of each formula. At the end of each paragraph, there will be clear and understandable corresponding JS and C++ code, you can run them without any additional preparation. You will certainly benefit a lot from it.</b></h4><button class="btn-3">Learn more</button><br><br><button class="btn-3" id="l_rog" onclick="l_rog()">Read on Github</button><br><br><button class="btn-3" onclick="l_dtb()" id="l_dtb">Download the book</button></div>
+  <div class="div-1" id="learn" align="left"><h3>| Learning AI</h3><h4 style="padding: 1vh"><b><i>BINKLINGS AI learning</i> is a completely free e-book, in which we will study "Neural Network" and "Deep Learning" in detail. We pay attention to the understanding of knowledge, so we will get to the bottom of the meaning, origin and specific use of each formula. At the end of each paragraph, there will be clear and understandable corresponding JS and C++ code, you can run them without any additional preparation. You will certainly benefit a lot from it.</b></h4><button class="btn-3" id="l_ro" onclick="l_ro()">Read Online</button><br><br><button class="btn-3" onclick="l_dog()" id="l_dog">Download on Github</button></div>
    <br>
-   <div class="div-1" id="learn" align="left"><h3>| Projects</h3><h4 style="padding: 1vh"><b></b></h4></div>
+   <div class="div-1" id="projects" align="left"><h3>| Projects</h3><h4 style="padding: 1vh"><b>VeritNet Engine is a powerful machine learning engine under development. Follow the <a href="https://www.veritnet.com/article?type=Blogs&page=Home">VeritNet blog</a> to learn more.</b></h4></div>
  </div>
 </body>
 </html>
@@ -108,42 +108,22 @@ function getip() {
   };
   xhr.send();
 }
-function getIpLocation(ipAddress) {
-  var xhr = new XMLHttpRequest();
-  xhr.open('GET', 'https://ipapi.co/' + ipAddress + '/json/');
-  xhr.onload = function() {
-    if (xhr.status === 200) {
-      var data = JSON.parse(xhr.responseText);
-      if(data.country_name == 'China'){
-       cncn = document.createElement('a');
-       cncn.href = 'https://www.123pan.com/s/csg9-JTTWd';
-       cncn.style.color = 'orange';
-       cncn.innerHTML = '<br><br>连接Github速度过慢？检测到您的网络来自中国且超过5秒未能连接到Github.com，如果您在访问Github时遇到问题，您可以点击此处通过备用线路下载本书';
-       document.getElementById('learn').appendChild(cncn);
-      }
-    } else {
-      console.log('Request failed. Returned status of ' + xhr.status);
-    }
-  };
-  xhr.send();
-}
 
-function l_rog(){
+function l_ro(){
  var newPageLoad_progress = document.createElement('div');
  newPageLoad_progress.className = 'progress-4';
  newPageLoad_progress.innerHTML = '';
   document.getElementById('l_rog').textContent = 'Redirecting to Github... ';
  document.getElementById('l_rog').appendChild(newPageLoad_progress);
- window.location.assign('https://github.com/BKLAI/AI-Learning');
- setTimeout('getip()',5000)
+ window.location.assign('https://www.veritnet.com/article?type=Learn&page=Home');
 }
-function l_dtb(){
+function l_dog(){
  var newPageLoad_progress = document.createElement('div');
  newPageLoad_progress.className = 'progress-4';
  newPageLoad_progress.innerHTML = '';
   document.getElementById('l_dtb').textContent = 'Connecting to Github... ';
  document.getElementById('l_dtb').appendChild(newPageLoad_progress);
- window.location.assign('https://github.com/BKLAI/AI-Learning/raw/main/Book1/zh_BINKLINGS%20AI%20learning%201.pdf');
+ window.location.assign('https://github.com/VeritNet/AI-Learning/');
  setTimeout('getip()',5000)
 }
 /*
