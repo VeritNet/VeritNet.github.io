@@ -1,0 +1,178 @@
+UTC - May 2, 2024<<</*/configurations/*/>>><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9321150248061877" 
+      crossorigin="anonymous"></script><style>img {border-radius: 1rem;width: 95%;margin-left: 1.5%;}</style>  
+<style>
+table {
+  width: 80%;
+  margin: 0 auto;
+  border-collapse: collapse;
+}
+th, td {
+  border: 1px solid white;
+  border-radius: 0.4rem;
+  padding: 8px;
+  text-align: left;
+}
+th {
+  background-color: rgba(80, 80, 200, 0.6);
+}
+</style>
+<h4 style="text-align: justify;">Modern parallel computing methods for multi-layer perceptron (deep) neural networks trained using backpropagation and gradient descent algorithms primarily rely on data parallelism based on mini-batch stochastic gradient descent and model parallelism based on tensor parallel computing. The main computational cost of a single neuron in a second-generation neural network lies in multiplying each input value by its weight and summing the results. When a single fully connected layer has a large number of parameters, the GPU performs the dot product operation of a one-dimensional tensor consisting of all input values and a one-dimensional tensor consisting of all weight values in blocks, taking full advantage of its SIMD and especially SIMT advantages. However, for cases with a small number of neurons in a single layer, thread synchronization and data transfer severely reduce parallel computing speed. Due to the irreversibility of the forward and backward propagation (chain rule) processes, the aforementioned problems in any fully connected layer in the MLP can become a significant performance bottleneck for the model. Therefore, CPU can be used as an alternative to GPU for purposes such as model debugging, novel neuron design, code analysis, or rapid training of lightweight specialized models. Because of the computational advantage of each core of the CPU, Mini-Batch SGD can be used to maximize the utilization of its computing power. Usually, when the batch size is larger than the number of logical processors, each thread will complete at least one complete forward and backward propagation process for a single data point.</h4>
+
+<h3><span style="color: lawngreen">&bull;</span> 2. Methods</h3>
+<h4><span style="color: skyblue">&bull;</span> 2.1 Memory Continuity and L1 Cache Hit Rate</h4>
+<h4>2.1.1 Data Structures</h4>
+<h4 style="text-align: justify;">The same data type, such as single-precision floating-point arrays, can be stored in memory as heaps or stacks. Two common management methods are native C++ arrays and the std::vector data type provided by the C++ Standard Library. The latter runs in heap space and has more complex checking and management mechanisms, and nested std::vectors cannot guarantee contiguous heap memory, thus bringing the risk of reducing processor cache hit rate.</h4>
+<h4 style="text-align: justify;">In addition, the container size dynamic management methods provided by std::vector will greatly increase the number of heap memory moves. Therefore, using one-dimensional heap arrays to store model parameters (the largest unit of a variable is the single-layer structure of the model, such as all the weights of a single fully connected layer, depending on the need for nodeization) can provide closer-to-the-bottom memory management while using shortcut subscript access, reading only the first-level pointer of the stack space once; by pre-planning (automatically) the size of the requested memory, redundant checking operations are avoided.</h4>
+<h4 style="text-align: justify;">For data participating in AVX2 instruction set accelerated computation, the starting memory is aligned to 32 bits; for data participating in AVX512 instruction set accelerated computation, the starting memory is aligned to 64 bits to accelerate the speed of data movement between memory and cache, ymm registers. Therefore, in some cases where the single-layer parameter memory size is not a multiple of 32/64 bits (such as the bias term array), blank padding is performed after it to the next aligned memory address.</h4>
+<h4>2.1.2 Data Sorting</h4>
+<h4 style="text-align: justify;">Spatial continuity is conducive to improving CPU cache hit rate, and L1 cache hits can significantly improve program computing performance.</h4>
+<h4 style="text-align: justify;">For cases where the single-layer parameter memory size is smaller than the L1 cache size, by applying the required memory space for each layer internally (including parameters, output values, gradients within threads, etc.) together in sequence, and applying different layers directly in layer order, the spatial continuity and sequentiality of memory access during forward and backward propagation is greatly improved.</h4>
+<h4 style="text-align: justify;">For cases where the single variable memory size exceeds the L1 cache, data blocking can enhance spatial continuity to some extent. It is usually achieved by blocking and regrouping parameters, gradients corresponding to the parameters, etc. in the same way, so that each parameter data block and its corresponding gradient data block are adjacent.</h4>
+<h4 style="text-align: justify;">Using the prefetch method of the instruction set interface can also prompt the processor to preload data that will be accessed in large quantities into the CPU cache in advance.</h4>
+<h4><span style="color: skyblue">&bull;</span> 2.2 Multi-threaded Parallel Computing Optimization</h4>
+<h4>2.2.1 Basic Algorithm Support</h4>
+<h4 style="text-align: justify;">In general, mini-batch stochastic gradient descent (MSGD) is the most suitable data parallel training algorithm. The training data is divided into multiple batches, and the data within a single batch can be trained concurrently, with each data point being fed forward and backpropagated on its own thread. Each time a thread calculates the gradient of a parameter, it accumulates the gradient within the thread. When all the data within a thread has been fed forward, backpropagated, and the gradient has been accumulated, it is added to the gradient in shared memory, thereby reducing the number of accesses to shared memory and reducing mutex lock duration. After waiting for all threads to complete the above steps, the last thread to complete the work updates the parameters of the neural network (gradient descent) by uniformly using the accumulated gradients on the shared variable.</h4>
+<h4>2.2.2 Thread Pool</h4>
+<h4 style="text-align: justify;">If a thread is started each time a batch is trained, starting and destroying threads will consume a lot of resources. In this case, start a number of threads close to the number of logical processors first and store them in the thread pool, which will assign a unique thread ID to each thread. After each thread completes a round of tasks, it enters a std::mutex mutex lock until the main thread unlocks it again to activate the thread. For MSGD, the thread can directly calculate the task content it needs to complete through the thread ID and batch ID, and read the required training data directly from shared memory (no thread mutex lock is required), which can reduce the serial time overhead caused by task allocation by the main thread, reduce branch judgment, and avoid function calls and large memory data transfer time consumption (passing pointers and references is also one of the solutions). The main thread also uses the mutex lock in the global shared memory to wait for the child thread to complete the task and then unlocks the main thread and enters the training of the next batch.</h4>
+<h4 style="text-align: justify;">In practice, the thread pool optimization effect will be more obvious when the calculation time of a single batch is small.</h4>
+<h4>2.2.3 Lock Granularity</h4>
+<h4 style="text-align: justify;">On a single locked mutex, threads must queue up and wait for execution in turn when they reach the lock. If you use a mutex to lock an entire section of code used to accumulate gradients, then other threads have to wait for one thread to execute the entire section of summation code. However, if you lock each float in a large gradient array separately (atomic operations based on std::atomic), frequent locking and unlocking will bring more performance overhead. So, you must weigh the lock granularity. After testing and experiments, the most efficient locking method is to evenly divide a large gradient array into multiple blocks, each with a mutex lock. Each time a thread accesses a block, it executes the try_lock function inherited from std::mutex. If the locking is successful, it continues to operate. If it is occupied by other threads, it jumps to another block and continues to try. Each thread holds its own gradient accumulation task list (you can use the std::vector<bool> data structure), and mark it when a block is successfully operated. Loop until all data blocks are updated by the thread. The number of blocks should be slightly less than or equal to the number of threads because if there are too many blocks, there will always be blocks idle, and if there are fewer blocks, the number of retries for threads will increase. The optimization effect of block locking is very obvious, and the overall running speed will also be greatly improved.</h4>
+<h4><span style="color: skyblue">&bull;</span> 2.3 Manual Optimization Methods</h4>
+<h4 style="text-align: justify;">For most AVX instructions, modern compilers provide a relatively complete set of interfaces for calling (except for GNU's incompatibility with LLVM), but if you need to ensure that 16 ymm registers (taking AVX2 as an example) are fully utilized, embedding assembly and moving up to 64 single-precision floats into registers at one time before executing calculation instructions can reduce the processor clock cycles required when the CPU switches instructions (sometimes even more than the instruction execution itself) to a certain extent.</h4>
+<h4 style="text-align: justify;">If you encapsulate various calculation operations as functions, you need to pass parameters. Whether you pass pointers or references, if you need to save a lot of memory operations for passing parameters, you need to inline the function, that is, replace all the code of the function to where it is called. The common inline identifier "inline" or the inline optimization option provided by the compiler is actually just a suggestion for compiler optimization. When the modern compiler thinks that the function is more complex, such as loops and nesting, it may refuse to inline. You can check the disassembled binary file to see if the inlining was successful. If you need to ensure that inlining is successful, you must manually replace it in the code. Therefore, unless necessary, all data from forward propagation to backpropagation and gradient descent are completed in a main function of a thread.</h4>
+<h4><span style="color: skyblue">&bull;</span> 2.4 Automatic Optimization Methods</h4>
+<h4 style="text-align: justify;">GNU's C++ compiler, g++, usually provides the most excellent optimization on various platforms (using cross-platform tools such as MinGW). Enabling O3 optimization in the g++ compiler, enabling loop unrolling optimization, enabling local CPU architecture adaptation optimization, and including the AVX instruction set can achieve a very significant performance improvement. Also, the Ofast option, which trades precision for speed, can bring a small performance improvement when necessary.</h4>
+<h4><span style="color: skyblue">&bull;</span> 2.5 Convolutional Pooling Layer Performance Optimization</h4>
+<h4>2.5.1 Channel-Based Sorting Optimization</h4>
+<h4 style="text-align: justify;">For multi-channel images, let the channels be ABCD, and the subscripts represent the pixel positions. Then two methods can be used to store the data:</h4>
+<table>
+  <thead>
+    <tr>
+      <th>Method 1</th>
+      <th>Method 2</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>{A1, A2, B1, B2, C1, C2, D1, D2}</td>
+      <td>{A1, B1, C1, D1, A2, B2, C2, D2}</td>
+    </tr>
+  </tbody>
+</table>
+<h4 style="text-align: justify;">For convolutional layers, this paper proposes a novel optimization scheme for AVX. According to the multi-channel convolutional layer model, for a single filter, it is necessary to perform convolution operations on all input feature maps and sum them up. Multi-channel images with input sorted by method 2 can enhance computational continuity, thereby improving the degree of SIMD. Taking 2D convolution as an example, the pixels are stored in a one-dimensional array in the order of Method 2, from top to bottom, and from left to right. For pixels on a single row, the memory of multiple locations and multiple channels is all continuous. By this method, not only can the number of input channels be used to make up for the case where the convolution kernel width does not meet AVX2 and AVX512, but it also helps to further improve the continuity and SIMD performance of convolution operations on the GPU; while common techniques such as img2col transform convolution operations into matrix multiplication, which is more common in HPC libraries, and cannot achieve the expected results similar to AMX for the AVX series of instruction sets.</h4>
+<h4 style="text-align: justify;">For pooling layers (max or average pooling), since horizontal operations (reduction) need to be performed between data at adjacent positions, method 1 becomes the only option. Therefore, if the next layer of this layer is a convolutional layer, the output format of this layer should be Method 2, and vice versa for pooling layers. Since the reduction after the convolution operation returns a single number, the only performance sacrifice is that the pooling layer cannot use SIMD instructions when splitting continuous data during data write-back. However, when the product of the number of channels and the memory occupied by a single floating-point number is less than the CPU L1 cache (which is satisfied in almost all cases), the performance sacrifice of this operation can still be exchanged for a significant performance improvement of the overall convolution pooling layer.</h4>
+<h4>2.5.2 Convolution Kernel Expansion</h4>
+<h4 style="text-align: justify;">When Method 2 in 2.5.1 still cannot meet the requirements of memory continuity and SIMD, you can consider expanding the convolution kernel memory size. First, calculate the minimum number of input floating-point numbers required to implement this SIMD. Taking AVX2 loading float as an example, a single SIMD instruction requires 8 floating-point numbers in continuous memory as input. Suppose the image width of the convolution kernel is 4 and the number of input channels is 3, then there are 3*4=12 floating-point numbers. After 12*n times, it can be divisible by 8. n takes the minimum value of 2, which is the multiple by which the convolution kernel needs to be expanded (expanded to 24 floating-point numbers per row). Then, through a certain derivation, the method of generating the corresponding code can be obtained. For details, please refer to the code in the open source repository.</h4>
+
+<h3><span style="color: lawngreen">&bull;</span> 3. Results</h3>
+<h4><span style="color: skyblue">&bull;</span> 3.1 MLP Performance</h4>
+<h4 style="text-align: justify;">This article tests the performance of using MLP to train a complete MNIST handwritten digit training set with 50,000 inputs of 28*28 and outputs of 10. The structure of the model is as follows: The input layer size is 784; the first hidden layer has 128 neurons and uses the Elu activation function (which is conducive to avoiding the vanishing gradient problem and has become a common activation function in practice); the second hidden layer has 32 neurons and also uses the Elu activation function; and the final output layer has 10 neurons and uses the Softmax activation function for normalization. The loss function used by the model is multi-class cross-entropy, and the training method is the backpropagation algorithm and MSGD. The learning rate may be adjusted dynamically, and no other optimizers are attached. The data used for training is not shuffled. This test mainly evaluates the training time. The C++ compiler in this article is g++, the Python version is 3.12.4, the PyTorch version is 2.2.0, and the system environment includes Windows 11 Professional and Ubuntu 24.02 Server Edition (container).</h4>
+<h4 style="text-align: justify;">On an Intel Core i7 processor (base speed 2.60GHz, maximum turbo frequency 4.50GHz, L1 cache 384KB, 12 logical processors, AVX2 instruction set), we respectively counted the average time (in seconds) taken to train 55 epochs at batch sizes of 5, 10, 20 and 50, and calculated the mean, as well as the average total memory usage (in MB) of the process.</h4>
+<table style="text-align: center;">
+  <caption>Table 1: Performance Statistics on Consumer Processors</caption>
+  <thead>
+    <tr>
+      <th>Batch Size</th>
+      <th>VeritNet Time (s)</th>
+      <th>PyTorch Time (s)</th>
+      <th>VeritNet Memory (MB)</th>
+      <th>PyTorch Memory (MB)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>5</td>
+      <td>1.24067</td>
+      <td>20.33090</td>
+      <td>332.633786</td>
+      <td>948.884924</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>0.82332</td>
+      <td>13.80360</td>
+      <td>333.418845</td>
+      <td>980.018924</td>
+    </tr>
+    <tr>
+      <td>20</td>
+      <td>0.50892</td>
+      <td>10.72560</td>
+      <td>332.527388</td>
+      <td>981.455704</td>
+    </tr>
+    <tr>
+      <td>50</td>
+      <td>0.36574</td>
+      <td>8.622550</td>
+      <td>335.186243</td>
+      <td>982.447460</td>
+    </tr>
+  </tbody>
+</table>
+<h4 style="text-align: justify;">From Table 1, the method used in this paper (VeritNet code) improves the speed and memory usage by about 20 times and 3 times compared with PyTorch, respectively.</h4>
+<h4 style="text-align: justify;">On an Intel Xeon processor (AVX512 instruction set, the specific performance is limited by the container), the speed performance at a batch size of 50 is also counted. From Table 2, we can see a more than 100-fold performance improvement (the actual performance difference on the server side varies from case to case).</h4>
+<table style="text-align: center;">
+  <caption>Table 2: Performance Statistics on Server Processors</caption>
+  <thead>
+    <tr>
+      <th>Batch Size</th>
+      <th>VeritNet Time (s)</th>
+      <th>PyTorch Time (s)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>50</td>
+      <td>1.36042</td>
+      <td>127.042</td>
+    </tr>
+  </tbody>
+</table>
+<h4><span style="color: skyblue">&bull;</span> 3.2 Dot Product Algorithm Performance Analysis</h4>
+<h4 style="text-align: justify;">As mentioned in 2.1.2, in this paper, we try to split two vectors of 104857600 single-precision floating-point numbers into 2048 data blocks to perform single-threaded dot product operations, and compare the speed with the cblas_sdot method in the Intel oneAPI Math Kernel Library, which also uses g++ as the compiler. The test includes the total time (in seconds) of 100 identical dot product operations.</h4>
+<table style="text-align: center;">
+  <caption>Table 3: Dot Product Algorithm Performance Test</caption>
+  <thead>
+    <tr>
+      <th>Test Times</th>
+      <th>OneMKL (s)</th>
+      <th>AVX2 Unblocked (s)</th>
+      <th>AVX2 Blocked Optimization (s)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>100</td>
+      <td>5.58176</td>
+      <td>5.66089</td>
+      <td>5.57322</td>
+    </tr>
+  </tbody>
+</table>
+<h4 style="text-align: justify;">From Table 3, through assembly acceleration and block optimization, the performance of the single-threaded dot product algorithm is close to the hardware physical limit.</h4>
+<h4>3.3 Convolution Algorithm Performance Analysis</h4>
+<h4 style="text-align: justify;">By adopting the optimization scheme in 2.5.1, this paper tests the forward inference performance of the convolution pooling activation layer, a complete Cifar-10 training set with 50,000 inputs of 32*32*3 and outputs of 10, using the same consumer-grade processor hardware and software environment as in 3.1.</h4>
+<table style="text-align: center;">
+  <caption>Table 4: Performance Statistics of Convolution Pooling Activation</caption>
+  <thead>
+    <tr>
+      <th>Batch Size</th>
+      <th>VeritNet Time (s)</th>
+      <th>PyTorch Time (s)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>0.6747261</td>
+      <td>28.04</td>
+    </tr>
+  </tbody>
+</table>
+<h4 style="text-align: justify;">The values in the table are the average time taken for 10 runs (total time taken for each run to infer 50,000 data), in seconds.</h4>
+<h3><span style="color: lawngreen">&bull;</span> 4. VeritNet Project</h3>
+<h4 style="text-align: justify;">One of the important positioning of this project is to optimize the training and inference performance of neural network deep learning on CPU and GPU through code generation. The code in this article is an optimized template for writing code generation, optimization, and compilation engines. Through real-time dynamic compilation from blueprint to C++ and C++ to assembly, the visualization and modular efficiency of model design can be realized at the same time, while improving running performance, significantly reducing equipment costs, and realizing the penetration from upstream model design to downstream code implementation. Therefore, the possibility of project application lies in the unified implementation possibility of automatic derivation based on blueprint calculation graph, automation of the inference process, visualization of design and debugging, and high-performance computing throughout.</h4>
+<h4 style="text-align: justify;">The generated version of the code used in this test is available at <a style="color: skyblue" href="https://github.com/veritnet/VeritNet/blob/main/TestVersions/">https://github.com/veritnet/VeritNet/blob/main/TestVersions/</a>.</h4>
+<br><br> 
+ <iframe style="width: 100%; left: 0; position: absolute; height: 100%; border: none; z-index: 2; border-radius: 1rem;" src="https://www.veritnet.com/a/Blogs/subscribe"></iframe>
